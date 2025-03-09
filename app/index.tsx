@@ -1,4 +1,3 @@
-
 import {
   StyleSheet,
   Text,
@@ -11,30 +10,32 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import React, { useState } from 'react';
-import { MaterialIcons } from '@expo/vector-icons'
+import React, { useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 
 const statusBarHeight = StatusBar.currentHeight;
 
 export default function App() {
   const [city, setCity] = useState("");
-  const [ days, setDays] = useState(1);
-  const [stayDuration, setStayDuration] = useState(10);
-  const [loading, setLoading ] = useState(false)
-  const [travel, setTravel] = useState("Aqui vai ser o roteiro completo..")
+  const [days, setDays] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [travel, setTravel] = useState("");
 
-  function handleGenerate(){
-    console.log(city)
-    console.log(days)
+  function handleGenerate() {
+    setLoading(true);
+    setTimeout(() => {
+      setTravel(`Roteiro para ${city} por ${days.toFixed(0)} dias.`);
+      setLoading(false);
+    }, 2000);
   }
 
   return (
     <ImageBackground
-    source={{ uri: "https://picsum.photos/800/600" }} 
-    style={styles.background}
-    blurRadius={3}
-  >
+      source={{ uri: "https://picsum.photos/800/600" }}
+      style={styles.background}
+      blurRadius={3}
+    >
       <View style={styles.overlay}>
         <StatusBar
           barStyle="light-content"
@@ -42,7 +43,7 @@ export default function App() {
           backgroundColor="transparent"
         />
         <Text style={styles.heading}>Roteiros</Text>
-        
+
         <View style={styles.form}>
           <Text style={styles.label}>Cidade destino</Text>
           <TextInput
@@ -50,47 +51,50 @@ export default function App() {
             placeholderTextColor="#A1A1A1"
             style={styles.input}
             value={city}
-            onChangeText={ (text) => setCity(text)}
-            
+            onChangeText={(text) => setCity(text)}
           />
-          
+
           <Text style={styles.label}>
-            Tempo de estadia: <Text style={styles.days}> {days.toFixed(0)} {stayDuration} </Text> dias
+            Tempo de estadia: <Text style={styles.days}>{days.toFixed(0)}</Text>{" "}
+            dias
           </Text>
-          
+
           <Slider
-            style={{  }}
+            style={styles.slider}
             minimumValue={1}
             maximumValue={30}
             step={1}
             minimumTrackTintColor="#FFFFFF"
             maximumTrackTintColor="#000000"
             value={days}
-            onValueChange={ (value) => setDays(value)}
+            onValueChange={(value) => setDays(value)}
           />
         </View>
+
         <Pressable style={styles.button} onPress={handleGenerate}>
-            <Text style={styles.buttonText}>Gerar Roteiros</Text>
-            <MaterialIcons name="travel-explore" size={24} color="#fff" />
+          <Text style={styles.buttonText}>Gerar Roteiros</Text>
+          <MaterialIcons name="travel-explore" size={24} color="#fff" />
         </Pressable>
-        <ScrollView contentContainerStyle={{ paddingBottom: 16, marginTop: 4, }} style={styles.containerScroll} showsVerticalScrollIndicator={false}>
-           {loading && (
-             <View style={styles.content}>
-             <Text style={styles.title}>Carregando Roteiro...</Text>
-             <ActivityIndicator size="large"/>
-         </View>
-           )}
-           
-           {travel && (
-             <View style={styles.content}>
-                <Text style={styles.title}>Roteiro da sua Viagem 🤞</Text>
-                <Text>{travel}</Text>
 
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 16, marginTop: 4 }}
+          style={styles.containerScroll}
+          showsVerticalScrollIndicator={false}
+        >
+          {loading && (
+            <View style={styles.content}>
+              <Text style={styles.title}>Carregando Roteiro...</Text>
+              <ActivityIndicator size="large" color="#3B82F6" />
             </View>
-           )}
+          )}
+
+          {!loading && travel && (
+            <View style={styles.content}>
+              <Text style={styles.title}>Roteiro da sua Viagem 🤞</Text>
+              <Text style={styles.travelText}>{travel}</Text>
+            </View>
+          )}
         </ScrollView>
-
-
       </View>
     </ImageBackground>
   );
@@ -104,7 +108,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Escurece a imagem de fundo para melhorar contraste
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     alignItems: "center",
     paddingTop: Platform.OS === "android" ? statusBarHeight : 54,
   },
@@ -117,7 +121,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 6,
   },
   form: {
-    backgroundColor: "#1E293B", // Azul moderno escuro
+    backgroundColor: "#1E293B",
     width: "90%",
     borderRadius: 8,
     padding: 16,
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderRadius: 4,
-    borderColor: "#3B82F6", // Azul moderno para realce
+    borderColor: "#3B82F6",
     padding: 8,
     fontSize: 16,
     color: "#FFF",
@@ -147,46 +151,48 @@ const styles = StyleSheet.create({
   },
   days: {
     fontWeight: "bold",
-    color: "#3B82F6", // Azul moderno para destaque
+    color: "#3B82F6",
   },
-  button:{
-    backgroundColor: '#ff5656',
+  slider: {
+    width: "100%",
+    height: 40,
+  },
+  button: {
+    backgroundColor: "#ff5656",
     width: "90%",
     borderRadius: 8,
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: 8,
-
-
   },
-  buttonText:{
+  buttonText: {
     fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
-
+    color: "#fff",
+    fontWeight: "bold",
   },
-  content:{
-   backgroundColor: '#15202f',
-   padding: 16,
-   width: '100%',
-   marginTop: 16,
-   borderRadius: 8,
-
-
+  content: {
+    backgroundColor: "#15202f",
+    padding: 16,
+    width: "100%",
+    marginTop: 16,
+    borderRadius: 8,
   },
-  title:{
+  title: {
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 14,
-    color: '#fff',
-
+    color: "#fff",
   },
-  containerScroll:{
-    width: '90%',
+  travelText: {
+    fontSize: 16,
+    color: "#E1E1E1",
+    textAlign: "center",
+  },
+  containerScroll: {
+    width: "90%",
     marginTop: 8,
-
-  }
+  },
 });
